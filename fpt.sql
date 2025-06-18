@@ -59,3 +59,61 @@ END;
 $$ LANGUAGE plpgsql;
 
 SELECT * FROM contar_votos_por_partido_y_candidato();
+
+
+
+CREATE OR REPLACE FUNCTION registrar_auditoria_estudiante()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO auditoria_estudiante(
+            accion, id_estudiante,
+            nombre_anterior, apellido_pat_anterior, apellido_mat_anterior, carrera_anterior, correo_anterior,
+            nombre_nuevo, apellido_pat_nuevo, apellido_mat_nuevo, carrera_nueva, correo_nuevo,
+            fecha
+        ) VALUES (
+            TG_OP,
+            NEW.id_estudiante,
+            NULL, NULL, NULL, NULL, NULL,
+            NEW.nombre, NEW.apellido_pat, NEW.apellido_mat, NEW.carrera, NEW.correo_institucional,
+            NOW()
+        );
+        RETURN NEW;
+    ELSIF TG_OP = 'UPDATE' THEN
+        INSERT INTO auditoria_estudiante(
+            accion, id_estudiante,
+            nombre_anterior, apellido_pat_anterior, apellido_mat_anterior, carrera_anterior, correo_anterior,
+            nombre_nuevo, apellido_pat_nuevo, apellido_mat_nuevo, carrera_nueva, correo_nuevo,
+            fecha
+        ) VALUES (
+            TG_OP,
+            OLD.id_estudiante,
+            OLD.nombre, OLD.apellido_pat, OLD.apellido_mat, OLD.carrera, OLD.correo_institucional,
+            NEW.nombre, NEW.apellido_pat, NEW.apellido_mat, NEW.carrera, NEW.correo_institucional,
+            NOW()
+        );
+        RETURN NEW;
+    ELSE -- DELETE
+        INSERT INTO auditoria_estudiante(
+            accion, id_estudiante,
+            nombre_anterior, apellido_pat_anterior, apellido_mat_anterior, carrera_anterior, correo_anterior,
+            nombre_nuevo, apellido_pat_nuevo, apellido_mat_nuevo, carrera_nueva, correo_nuevo,
+            fecha
+        ) VALUES (
+            TG_OP,
+            OLD.id_estudiante,
+            OLD.nombre, OLD.apellido_pat, OLD.apellido_mat, OLD.carrera, OLD.correo_institucional,
+            NULL, NULL, NULL, NULL, NULL,
+            NOW()
+        );
+        RETURN OLD;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_auditoria_estudiante
+AFTER INSERT OR UPDATE OR DELETE ON estudiantes
+FOR EACH ROW
+EXECUTE FUNCTION registrar_auditoria_estudiante();
+
+SELECT * FROM auditoria_estudiante;
