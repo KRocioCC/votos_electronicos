@@ -35,8 +35,6 @@ public class AuditoriaEstudiante {
     private String correoAnterior;
     private String correoNuevo;
 
-
  
-
     private LocalDateTime fecha;
 }

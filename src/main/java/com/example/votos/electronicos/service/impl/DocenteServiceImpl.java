@@ -66,6 +66,7 @@ public class DocenteServiceImpl implements IDocenteService {
         docenteExistente.setCarrera(docenteDTO.getCarrera());
         docenteExistente.setCorreoInstitucional(docenteDTO.getCorreoInstitucional());
         docenteExistente.setVoto(docenteDTO.getVoto());
+        docenteExistente.setAntiguedad(docenteDTO.getAntiguedad());
 
         Docente docenteActualizado = docenteRepository.save(docenteExistente);
         return convertToDTO(docenteActualizado);
@@ -103,27 +104,31 @@ public class DocenteServiceImpl implements IDocenteService {
         docenteRepository.delete(docenteExistente);
     }
 
+    // Conversión de entidad a DTO
     private DocenteDTO convertToDTO(Docente docente) {
         return DocenteDTO.builder()
-                .idDocente(docente.getIdDocente())
+                .id(docente.getId())
                 .nombre(docente.getNombre())
                 .apellidoPat(docente.getApellidoPat())
                 .apellidoMat(docente.getApellidoMat())
                 .carrera(docente.getCarrera())
                 .correoInstitucional(docente.getCorreoInstitucional())
                 .voto(docente.getVoto())
+                .antiguedad(docente.getAntiguedad())
                 .build();
     }
 
+    // Conversión de DTO a entidad
     private Docente convertToEntity(DocenteDTO docenteDTO) {
         return Docente.builder()
-                .idDocente(docenteDTO.getIdDocente())
+                .id(docenteDTO.getId())
                 .nombre(docenteDTO.getNombre())
                 .apellidoPat(docenteDTO.getApellidoPat())
                 .apellidoMat(docenteDTO.getApellidoMat())
                 .carrera(docenteDTO.getCarrera())
                 .correoInstitucional(docenteDTO.getCorreoInstitucional())
                 .voto(docenteDTO.getVoto())
+                .antiguedad(docenteDTO.getAntiguedad())
                 .build();
     }
 }

@@ -1,21 +1,37 @@
 package com.example.votos.electronicos.model;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Builder;
 
-import jakarta.persistence.*;
-
+/**
+ * Entidad que representa un voto emitido por un votante a un partido político.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "votos")
+@Table(
+    name = "votos",
+    uniqueConstraints = @UniqueConstraint(columnNames = "id_votante")
+)
 @EqualsAndHashCode
 public class Voto {
 
@@ -24,22 +40,11 @@ public class Voto {
     @Column(name = "id_voto")
     private Long idVoto;
 
-    @ManyToOne
-    @JoinColumn(name = "id_estudiante", referencedColumnName = "id_estudiante")
-    private Estudiante estudiante;  // Relación con Estudiante (un candidato es un docente, estudiante, etc.)
+    @OneToOne(optional = false)
+    @JoinColumn(name = "id_votante", referencedColumnName = "id_votante", nullable = false, unique = true)
+    private Votante votante;
 
-    @ManyToOne
-    @JoinColumn(name = "id_docente", referencedColumnName = "id_docente")
-    private Docente docente;  // Relación con Docente (si es el caso)
-
-    @ManyToOne
-    @JoinColumn(name = "id_partido", referencedColumnName = "id_partido")
-    private Partido partido;  // Relación con Partido (al cual se vota)
-
-    @ManyToOne
-    @JoinColumn(name = "id_candidato", referencedColumnName = "id_candidato")
-    private Candidato candidato;  // Relación con Candidato (al cual se le da el voto)
-
-    //@Column(name = "tipo_voto", nullable = false)
-    //private String tipoVoto;  // Tipo de voto (presidente/vicepresidente)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_partido", referencedColumnName = "id_partido", nullable = false)
+    private Partido partido;
 }

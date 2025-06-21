@@ -1,16 +1,14 @@
 package com.example.votos.electronicos.service.impl;
 
 import com.example.votos.electronicos.model.Voto;
+import com.example.votos.electronicos.dto.CarreraVotoDTO;
+import com.example.votos.electronicos.dto.ConteoVotosPartidoDTO;
 import com.example.votos.electronicos.dto.VotoDTO;
-import com.example.votos.electronicos.model.Candidato;
-import com.example.votos.electronicos.model.Estudiante;
-import com.example.votos.electronicos.model.Docente;
 import com.example.votos.electronicos.model.Partido;
+import com.example.votos.electronicos.model.Votante;
 import com.example.votos.electronicos.repository.VotoRepository;
-import com.example.votos.electronicos.repository.EstudianteRepository;
-import com.example.votos.electronicos.repository.DocenteRepository;
 import com.example.votos.electronicos.repository.PartidoRepository;
-import com.example.votos.electronicos.repository.CandidatoRepository;
+import com.example.votos.electronicos.repository.VotanteRepository;
 import com.example.votos.electronicos.service.IVotoService;
 import com.example.votos.electronicos.validation.VotoValidator;
 
@@ -21,32 +19,23 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.example.votos.electronicos.dto.ConteoVotosCandidatoDTO;
-import com.example.votos.electronicos.dto.ConteoVotosPartidoCandidatoDTO;
-
 @Service
 public class VotoServiceImpl implements IVotoService {
 
     private final VotoRepository votoRepository;
-    private final EstudianteRepository estudianteRepository;
-    private final DocenteRepository docenteRepository;
+    private final VotanteRepository votanteRepository;
     private final PartidoRepository partidoRepository;
-    private final CandidatoRepository candidatoRepository;
     private final VotoValidator votoValidator;
 
     @Autowired
     public VotoServiceImpl(
             VotoRepository votoRepository,
-            EstudianteRepository estudianteRepository,
-            DocenteRepository docenteRepository,
+            VotanteRepository votanteRepository,
             PartidoRepository partidoRepository,
-            CandidatoRepository candidatoRepository,
             VotoValidator votoValidator) {
         this.votoRepository = votoRepository;
-        this.estudianteRepository = estudianteRepository;
-        this.docenteRepository = docenteRepository;
+        this.votanteRepository = votanteRepository;
         this.partidoRepository = partidoRepository;
-        this.candidatoRepository = candidatoRepository;
         this.votoValidator = votoValidator;
     }
 
@@ -71,44 +60,22 @@ public class VotoServiceImpl implements IVotoService {
     public VotoDTO crearVoto(VotoDTO votoDTO) {
         votoValidator.validacionCompletaVoto(votoDTO);
 
-        Estudiante estudiante = null;
-        if (votoDTO.getIdEstudiante() != null) {
-            estudiante = estudianteRepository.findById(votoDTO.getIdEstudiante())
-                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
-        }
-        Docente docente = null;
-        if (votoDTO.getIdDocente() != null) {
-            docente = docenteRepository.findById(votoDTO.getIdDocente())
-                .orElseThrow(() -> new RuntimeException("Docente no encontrado"));
-        }
-        Partido partido = null;
-        if (votoDTO.getIdPartido() != null) {
-            partido = partidoRepository.findById(votoDTO.getIdPartido())
+        Votante votante = votanteRepository.findById(votoDTO.getIdVotante())
+                .orElseThrow(() -> new RuntimeException("Votante no encontrado"));
+
+        Partido partido = partidoRepository.findById(votoDTO.getIdPartido())
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
-        }
-        Candidato candidato = null;
-        if (votoDTO.getIdCandidato() != null) {
-            candidato = candidatoRepository.findById(votoDTO.getIdCandidato())
-                .orElseThrow(() -> new RuntimeException("Candidato no encontrado"));
-        }
 
         Voto voto = Voto.builder()
-                .estudiante(estudiante)
-                .docente(docente)
+                .votante(votante)
                 .partido(partido)
-                .candidato(candidato)
                 .build();
 
         Voto votoGuardado = votoRepository.save(voto);
 
-        // Cambiar el atributo 'voto' a true
-        if (estudiante != null && !Boolean.TRUE.equals(estudiante.getVoto())) {
-            estudiante.setVoto(true);
-            estudianteRepository.save(estudiante);
-        }
-        if (docente != null && !Boolean.TRUE.equals(docente.getVoto())) {
-            docente.setVoto(true);
-            docenteRepository.save(docente);
+        if (!Boolean.TRUE.equals(votante.getVoto())) {
+            votante.setVoto(true);
+            votanteRepository.save(votante);
         }
 
         return convertToDTO(votoGuardado);
@@ -122,42 +89,20 @@ public class VotoServiceImpl implements IVotoService {
 
         votoValidator.validacionCompletaVoto(votoDTO);
 
-        Estudiante estudiante = null;
-        if (votoDTO.getIdEstudiante() != null) {
-            estudiante = estudianteRepository.findById(votoDTO.getIdEstudiante())
-                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
-        }
-        Docente docente = null;
-        if (votoDTO.getIdDocente() != null) {
-            docente = docenteRepository.findById(votoDTO.getIdDocente())
-                .orElseThrow(() -> new RuntimeException("Docente no encontrado"));
-        }
-        Partido partido = null;
-        if (votoDTO.getIdPartido() != null) {
-            partido = partidoRepository.findById(votoDTO.getIdPartido())
-                .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
-        }
-        Candidato candidato = null;
-        if (votoDTO.getIdCandidato() != null) {
-            candidato = candidatoRepository.findById(votoDTO.getIdCandidato())
-                .orElseThrow(() -> new RuntimeException("Candidato no encontrado"));
-        }
+        Votante votante = votanteRepository.findById(votoDTO.getIdVotante())
+                .orElseThrow(() -> new RuntimeException("Votante no encontrado"));
 
-        votoExistente.setEstudiante(estudiante);
-        votoExistente.setDocente(docente);
+        Partido partido = partidoRepository.findById(votoDTO.getIdPartido())
+                .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
+
+        votoExistente.setVotante(votante);
         votoExistente.setPartido(partido);
-        votoExistente.setCandidato(candidato);
 
         Voto votoActualizado = votoRepository.save(votoExistente);
 
-        // Cambiar el atributo 'voto' a true si corresponde
-        if (estudiante != null && !Boolean.TRUE.equals(estudiante.getVoto())) {
-            estudiante.setVoto(true);
-            estudianteRepository.save(estudiante);
-        }
-        if (docente != null && !Boolean.TRUE.equals(docente.getVoto())) {
-            docente.setVoto(true);
-            docenteRepository.save(docente);
+        if (!Boolean.TRUE.equals(votante.getVoto())) {
+            votante.setVoto(true);
+            votanteRepository.save(votante);
         }
 
         return convertToDTO(votoActualizado);
@@ -170,7 +115,6 @@ public class VotoServiceImpl implements IVotoService {
                 .orElseThrow(() -> new RuntimeException("Voto no encontrado con ID: " + id));
 
         votoRepository.delete(votoExistente);
-
         return convertToDTO(votoExistente);
     }
 
@@ -183,92 +127,32 @@ public class VotoServiceImpl implements IVotoService {
     }
 
     private VotoDTO convertToDTO(Voto voto) {
-        VotoDTO dto = new VotoDTO();
-        dto.setIdVoto(voto.getIdVoto());
-
-        if (voto.getEstudiante() != null) {
-            dto.setIdEstudiante(voto.getEstudiante().getIdEstudiante());
-        } else {
-            dto.setIdEstudiante(null);
-        }
-
-        if (voto.getDocente() != null) {
-            dto.setIdDocente(voto.getDocente().getIdDocente());
-        } else {
-            dto.setIdDocente(null);
-        }
-
-        if (voto.getPartido() != null) {
-            dto.setIdPartido(voto.getPartido().getIdPartido());
-        } else {
-            dto.setIdPartido(null);
-        }
-
-        if (voto.getCandidato() != null) {
-            dto.setIdCandidato(voto.getCandidato().getIdCandidato());
-        } else {
-            dto.setIdCandidato(null);
-        }
-
-        return dto;
-    }
-
-    private Voto convertToEntity(VotoDTO votoDTO) {
-        Estudiante estudiante = null;
-        if (votoDTO.getIdEstudiante() != null) {
-            estudiante = estudianteRepository.findById(votoDTO.getIdEstudiante())
-                .orElse(null);
-        }
-        Docente docente = null;
-        if (votoDTO.getIdDocente() != null) {
-            docente = docenteRepository.findById(votoDTO.getIdDocente())
-                .orElse(null);
-        }
-        Partido partido = null;
-        if (votoDTO.getIdPartido() != null) {
-            partido = partidoRepository.findById(votoDTO.getIdPartido())
-                .orElse(null);
-        }
-        Candidato candidato = null;
-        if (votoDTO.getIdCandidato() != null) {
-            candidato = candidatoRepository.findById(votoDTO.getIdCandidato())
-                .orElse(null);
-        }
-
-        return Voto.builder()
-                .idVoto(votoDTO.getIdVoto())
-                .estudiante(estudiante)
-                .docente(docente)
-                .partido(partido)
-                .candidato(candidato)
+        return VotoDTO.builder()
+                .idVoto(voto.getIdVoto())
+                .idVotante(voto.getVotante().getId())
+                .idPartido(voto.getPartido().getIdPartido())
                 .build();
     }
-
-    private Candidato createCandidatoFromId(Long idCandidato) {
-        return idCandidato != null ? new Candidato(idCandidato) : null;
-    }
-
-    // Para la función de conteo de votos por candidato
-    public List<ConteoVotosCandidatoDTO> contarVotosPorCandidato() {
-        List<Object[]> rows = votoRepository.contarVotosPorCandidatoRaw();
+    public List<ConteoVotosPartidoDTO> contarVotosPorPartido() {
+    List<Object[]> rows = votoRepository.contarVotosPorPartidoRaw();
+    return rows.stream()
+        .map(r -> new ConteoVotosPartidoDTO(
+            (String) r[0],
+            ((Number) r[1]).longValue()
+        ))
+        .collect(Collectors.toList());
+        }
+        
+        @Override
+        public List<CarreraVotoDTO> contarVotosPorCarrera() {
+        List<Object[]> rows = votoRepository.contarVotosPorCarreraRaw();
         return rows.stream()
-            .map(r -> new ConteoVotosCandidatoDTO(
-                ((Number) r[0]).longValue(),
-                (String) r[1],
-                ((Number) r[2]).longValue()
-            ))
-            .collect(java.util.stream.Collectors.toList());
-    }
-
-    // Para la función de conteo de votos por partido y candidato
-    public List<ConteoVotosPartidoCandidatoDTO> contarVotosPorPartidoYCandidato() {
-        List<Object[]> rows = votoRepository.contarVotosPorPartidoYCandidatoRaw();
-        return rows.stream()
-            .map(r -> new ConteoVotosPartidoCandidatoDTO(
+                .map(r -> new CarreraVotoDTO(
                 (String) r[0],
-                (String) r[1],
-                ((Number) r[2]).longValue()
-            ))
-            .collect(java.util.stream.Collectors.toList());
-    }
+                ((Number) r[1]).longValue()
+                ))
+                .collect(Collectors.toList());
+        }
+
+
 }

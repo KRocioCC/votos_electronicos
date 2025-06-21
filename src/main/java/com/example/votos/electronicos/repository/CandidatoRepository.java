@@ -6,6 +6,14 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CandidatoRepository extends JpaRepository<Candidato, Long> {
-    // Usa los nombres correctos de los campos de las entidades relacionadas
-    Boolean existsByDocenteIdDocenteAndPartidoIdPartido(Long idDocente, Long idPartido);
+
+    // Verifica si un docente ya está registrado como candidato en un partido
+    
+
+    // ✅ Correcto
+    Boolean existsByDocenteIdAndPartidoIdPartido(Long idDocente, Long idPartido);
+
+
+    // Verifica si ya existe un cargo ocupado en ese partido
+    Boolean existsByPartidoIdPartidoAndCargo(Long idPartido, String cargo);
 }

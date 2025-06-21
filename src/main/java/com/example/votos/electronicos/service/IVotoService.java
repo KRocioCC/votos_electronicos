@@ -2,11 +2,12 @@ package com.example.votos.electronicos.service;
 
 import com.example.votos.electronicos.dto.VotoDTO;
 import com.example.votos.electronicos.model.Voto;
-
-import com.example.votos.electronicos.dto.ConteoVotosCandidatoDTO;
-import com.example.votos.electronicos.dto.ConteoVotosPartidoCandidatoDTO;
+import com.example.votos.electronicos.dto.CarreraVotoDTO;
+import com.example.votos.electronicos.dto.ConteoVotosPartidoDTO;
 
 import java.util.List;
+
+import org.springframework.data.jpa.repository.Query;
 
 public interface IVotoService {
 
@@ -28,8 +29,13 @@ public interface IVotoService {
     // Eliminar físicamente un voto
     void eliminarVotoFisicamente(Long id);
 
-    //para contar votos por candidato (FUNCION)
-    List<ConteoVotosCandidatoDTO> contarVotosPorCandidato();
+    //FUNCION CARRERAS
+    
+    // FUNCIÓN CARRERAS
+    List<CarreraVotoDTO> contarVotosPorCarrera();
 
-    List<ConteoVotosPartidoCandidatoDTO> contarVotosPorPartidoYCandidato();
+
+    //FUNCION DASHBOARD
+    List<ConteoVotosPartidoDTO> contarVotosPorPartido();
+
 }

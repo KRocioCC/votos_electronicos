@@ -15,7 +15,12 @@ import jakarta.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "candidatos")
+@Table(
+    name = "candidatos",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"id_partido", "cargo"})  // Un cargo por partido
+    }
+)
 @EqualsAndHashCode
 public class Candidato {
 
@@ -24,19 +29,20 @@ public class Candidato {
     @Column(name = "id_candidato")
     private Long idCandidato;
 
+    //CAMBIO
     @ManyToOne
-    @JoinColumn(name = "id_docente", referencedColumnName = "id_docente", nullable = false)
-    private Docente docente;  // Relación con la entidad Docente (un candidato es un docente)
+    @JoinColumn(name = "id_votante", nullable = false)
+    private Docente docente;
 
-    @ManyToOne
+
+    @ManyToOne(optional = false)
     @JoinColumn(name = "id_partido", referencedColumnName = "id_partido", nullable = false)
-    private Partido partido;  // Relación con la entidad Partido (un candidato pertenece a un partido)
+    private Partido partido;  // Pertenece a un partido
 
-    @Column(name = "cargo", nullable = false)
-    private String cargo;  // Cargo del candidato (presidente, vicepresidente)
+    @Column(name = "cargo", nullable = false, length = 50)
+    private String cargo;  // "decano" o "vicedecano" por ejemplo
 
-
-    // Constructor solo con idPartido
+    // Constructor auxiliar por ID
     public Candidato(Long idCandidato) {
         this.idCandidato = idCandidato;
     }

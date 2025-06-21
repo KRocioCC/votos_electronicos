@@ -24,7 +24,7 @@ public class Partido {
     @Column(name = "id_partido")
     private Long idPartido;
 
-    @Column(name = "nombre_partido", nullable = false)
+    @Column(name = "nombre_partido", nullable = false, length = 50)
     private String nombrePartido;
 
     @Column(name = "sigla", nullable = false, length = 10)

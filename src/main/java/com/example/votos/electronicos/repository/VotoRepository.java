@@ -6,16 +6,21 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+
 @Repository
 public interface VotoRepository extends JpaRepository<Voto, Long> {
 
-    // Verifica si ya existe un voto de un Estudiante o Docente para un Candidato y Partido
-    Boolean existsByEstudianteIdEstudianteAndPartidoIdPartidoAndCandidatoIdCandidato(Long idEstudiante, Long idPartido, Long idCandidato);
+    // Verifica si ya existe un voto del votante hacia un partido
 
-    //agregando la funcion para contar votos por candidato
-    @Query(value = "SELECT * FROM contar_votos_candidatos()", nativeQuery = true)
-    List<Object[]> contarVotosPorCandidatoRaw();
+    Boolean existsByVotanteIdAndPartidoIdPartido(Long idVotante, Long idPartido);
 
-    @Query(value = "SELECT * FROM contar_votos_por_partido_y_candidato()", nativeQuery = true)
-    List<Object[]> contarVotosPorPartidoYCandidatoRaw();
+    //FUNCION CARRERAS Y VOTOS
+    @Query(value = "SELECT * FROM top_carreras_con_mas_votos()", nativeQuery = true)
+    List<Object[]> contarVotosPorCarreraRaw();
+
+
+    //FUNCION DASHBOARD
+    @Query(value = "SELECT * FROM contar_votos_por_partido()", nativeQuery = true)
+    List<Object[]> contarVotosPorPartidoRaw();
+
 }

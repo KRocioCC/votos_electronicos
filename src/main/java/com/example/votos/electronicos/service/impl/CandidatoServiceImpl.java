@@ -48,6 +48,13 @@ public class CandidatoServiceImpl implements ICandidatoService {
     public CandidatoDTO crearCandidato(CandidatoDTO candidatoDTO) {
         candidatoValidator.validacionCompletaCandidato(candidatoDTO);
 
+        // Validación para evitar duplicado de cargo por partido
+        if (candidatoRepository.existsByPartidoIdPartidoAndCargo(
+                candidatoDTO.getIdPartido(),
+                candidatoDTO.getCargo())) {
+            throw new CandidatoValidator.BusinessException("Este partido ya tiene un candidato registrado como " + candidatoDTO.getCargo());
+        }
+
         Candidato candidato = convertToEntity(candidatoDTO);
         Candidato candidatoGuardado = candidatoRepository.save(candidato);
 
@@ -62,15 +69,22 @@ public class CandidatoServiceImpl implements ICandidatoService {
 
         candidatoValidator.validacionCompletaCandidato(candidatoDTO);
 
+        // Verificamos si el cargo o el partido cambiaron
+        boolean cargoCambio = !candidatoExistente.getCargo().equalsIgnoreCase(candidatoDTO.getCargo());
+        boolean partidoCambio = !candidatoExistente.getPartido().getIdPartido().equals(candidatoDTO.getIdPartido());
+
+        if ((cargoCambio || partidoCambio)
+                && candidatoRepository.existsByPartidoIdPartidoAndCargo(candidatoDTO.getIdPartido(), candidatoDTO.getCargo())) {
+            throw new CandidatoValidator.BusinessException("Ya existe un " + candidatoDTO.getCargo() + " para este partido");
+        }
+
         candidatoExistente.setDocente(new Docente(candidatoDTO.getIdDocente()));
         candidatoExistente.setPartido(new Partido(candidatoDTO.getIdPartido()));
         candidatoExistente.setCargo(candidatoDTO.getCargo());
 
-        Candidato candidatoActualizado = candidatoRepository.save(candidatoExistente);
-        return convertToDTO(candidatoActualizado);
+        Candidato actualizado = candidatoRepository.save(candidatoExistente);
+        return convertToDTO(actualizado);
     }
-
-
 
     @Override
     @Transactional
@@ -80,21 +94,23 @@ public class CandidatoServiceImpl implements ICandidatoService {
         candidatoRepository.delete(candidatoExistente);
     }
 
+    // Conversión a DTO
     private CandidatoDTO convertToDTO(Candidato candidato) {
         return CandidatoDTO.builder()
                 .idCandidato(candidato.getIdCandidato())
-                .idDocente(candidato.getDocente().getIdDocente())
+                .idDocente(candidato.getDocente().getId())
                 .idPartido(candidato.getPartido().getIdPartido())
                 .cargo(candidato.getCargo())
                 .build();
     }
 
-    private Candidato convertToEntity(CandidatoDTO candidatoDTO) {
+    // Conversión a entidad
+    private Candidato convertToEntity(CandidatoDTO dto) {
         return Candidato.builder()
-                .idCandidato(candidatoDTO.getIdCandidato())
-                .docente(new Docente(candidatoDTO.getIdDocente()))
-                .partido(new Partido(candidatoDTO.getIdPartido()))
-                .cargo(candidatoDTO.getCargo())
+                .idCandidato(dto.getIdCandidato())
+                .docente(new Docente(dto.getIdDocente()))
+                .partido(new Partido(dto.getIdPartido()))
+                .cargo(dto.getCargo())
                 .build();
     }
 }

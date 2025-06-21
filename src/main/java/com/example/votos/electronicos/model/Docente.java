@@ -1,49 +1,32 @@
 package com.example.votos.electronicos.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Builder;
-
-import jakarta.persistence.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "docentes")
-@EqualsAndHashCode
-public class Docente {
+@EqualsAndHashCode(callSuper = true)
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_docente")
-    private Long idDocente;
+public class Docente extends Votante {
 
-    @Column(name = "nombre", nullable = false)
-    private String nombre;
-
-    @Column(name = "apellido_pat", nullable = false)
-    private String apellidoPat;
-
-    @Column(name = "apellido_mat", nullable = false)
-    private String apellidoMat;
-
-    @Column(name = "carrera", nullable = false)
-    private String carrera;
-
-    @Column(name = "correo_institucional", nullable = false, unique = true)
-    private String correoInstitucional;
-
-    @Column(name = "voto", nullable = false)
-    private Boolean voto;  // true si votó, false si no votó
-
-     // Constructor solo con idDocente
-    public Docente(Long idDocente) {
-        this.idDocente = idDocente;
+    public Docente(Long id) {
+        super.setId(id);
     }
+
+    @Column(name = "antiguedad", nullable = false, length = 50)
+    private Integer antiguedad; // Años de experiencia o permanencia del docente
 }

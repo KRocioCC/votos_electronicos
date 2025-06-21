@@ -66,6 +66,7 @@ public class EstudianteServiceImpl implements IEstudianteService {
         estudianteExistente.setCarrera(estudianteDTO.getCarrera());
         estudianteExistente.setCorreoInstitucional(estudianteDTO.getCorreoInstitucional());
         estudianteExistente.setVoto(estudianteDTO.getVoto());
+        estudianteExistente.setAnioIngreso(estudianteDTO.getAnioIngreso());
 
         Estudiante estudianteActualizado = estudianteRepository.save(estudianteExistente);
         return convertToDTO(estudianteActualizado);
@@ -105,25 +106,27 @@ public class EstudianteServiceImpl implements IEstudianteService {
 
     private EstudianteDTO convertToDTO(Estudiante estudiante) {
         return EstudianteDTO.builder()
-                .idEstudiante(estudiante.getIdEstudiante())
+                .id(estudiante.getId())
                 .nombre(estudiante.getNombre())
                 .apellidoPat(estudiante.getApellidoPat())
                 .apellidoMat(estudiante.getApellidoMat())
                 .carrera(estudiante.getCarrera())
                 .correoInstitucional(estudiante.getCorreoInstitucional())
                 .voto(estudiante.getVoto())
+                .anioIngreso(estudiante.getAnioIngreso())
                 .build();
     }
 
     private Estudiante convertToEntity(EstudianteDTO estudianteDTO) {
         return Estudiante.builder()
-                .idEstudiante(estudianteDTO.getIdEstudiante())
+                .id(estudianteDTO.getId())
                 .nombre(estudianteDTO.getNombre())
                 .apellidoPat(estudianteDTO.getApellidoPat())
                 .apellidoMat(estudianteDTO.getApellidoMat())
                 .carrera(estudianteDTO.getCarrera())
                 .correoInstitucional(estudianteDTO.getCorreoInstitucional())
                 .voto(estudianteDTO.getVoto())
+                .anioIngreso(estudianteDTO.getAnioIngreso())
                 .build();
     }
 }

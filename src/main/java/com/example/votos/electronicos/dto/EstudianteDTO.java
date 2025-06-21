@@ -9,16 +9,13 @@ import java.io.Serializable;
 
 import jakarta.validation.constraints.*;
 
-/**
- * DTO para transferencia de datos de Estudiante con validaciones.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class EstudianteDTO implements Serializable {
 
-    private Long idEstudiante;
+    private Long id;
 
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
@@ -38,6 +35,12 @@ public class EstudianteDTO implements Serializable {
              message = "El correo debe ser institucional terminando en @umsa.bo")
     private String correoInstitucional;
 
+       @NotNull(message = "El año de ingreso es obligatorio")
+    @Min(value = 2000, message = "El año debe ser mayor o igual a 2000")
+    @Max(value = 2025, message = "El año debe ser menor o igual a 2025")
+    private Integer anioIngreso;
     @NotNull(message = "El voto es obligatorio")
-    private Boolean voto;  // true si votó, false si no votó
+    private Boolean voto;
+
+
 }

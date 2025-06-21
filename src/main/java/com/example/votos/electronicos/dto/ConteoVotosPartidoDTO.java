@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ConteoVotosPartidoCandidatoDTO {
+public class ConteoVotosPartidoDTO {
     private String nombrePartido;
-    private String nombreCandidato;
     private Long totalVotos;
 }

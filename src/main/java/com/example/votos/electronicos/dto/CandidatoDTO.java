@@ -27,7 +27,7 @@ public class CandidatoDTO implements Serializable {
     private Long idPartido;  // ID del partido (referencia a Partido)
 
     @NotBlank(message = "El cargo es obligatorio")
-    @Pattern(regexp = "presidente|vicepresidente", 
-             message = "El cargo debe ser 'presidente' o 'vicepresidente'")
-    private String cargo;  // Cargo del candidato (presidente, vicepresidente)
+    @Pattern(regexp = "decano|vicedecano", 
+             message = "El cargo debe ser 'decano' o 'vicedecano'")
+    private String cargo;  // Cargo del candidato (decano o vicedecano)
 }

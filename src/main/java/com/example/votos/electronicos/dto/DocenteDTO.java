@@ -18,7 +18,7 @@ import jakarta.validation.constraints.*;
 @Builder
 public class DocenteDTO implements Serializable {
 
-    private Long idDocente;
+    private Long id;
 
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
@@ -39,5 +39,9 @@ public class DocenteDTO implements Serializable {
     private String correoInstitucional;
 
     @NotNull(message = "El voto es obligatorio")
-    private Boolean voto;  // true si votó, false si no votó
+    private Boolean voto;
+
+    @NotNull(message = "La antigüedad es obligatoria")
+    @Min(value = 0, message = "La antigüedad no puede ser negativa")
+    private Integer antiguedad;
 }

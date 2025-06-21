@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.votos.electronicos.dto.ConteoVotosCandidatoDTO;
+import com.example.votos.electronicos.dto.CarreraVotoDTO;
 
 import java.util.List;
-import com.example.votos.electronicos.dto.ConteoVotosPartidoCandidatoDTO;
+import com.example.votos.electronicos.dto.ConteoVotosPartidoDTO;
 
 @RestController
 @RequestMapping("/api/votos")
@@ -70,13 +70,15 @@ public class VotoController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No se pueden eliminar los votos");
     }
 
-    @GetMapping("/votos/por-candidato")
-    public List<ConteoVotosCandidatoDTO> contarVotosPorCandidato() {
-        return votoService.contarVotosPorCandidato();
+    @GetMapping("/votos/por-partido")
+    public List<ConteoVotosPartidoDTO> contarVotosPorPartido() {
+        return votoService.contarVotosPorPartido();
     }
 
-    @GetMapping("/votos/por-partido-candidato")
-    public List<ConteoVotosPartidoCandidatoDTO> contarVotosPorPartidoYCandidato() {
-        return votoService.contarVotosPorPartidoYCandidato();
+    @GetMapping("/votos/top-carreras")
+    public List<CarreraVotoDTO> contarVotosPorCarrera() {
+        return votoService.contarVotosPorCarrera();
     }
+
+
 }
