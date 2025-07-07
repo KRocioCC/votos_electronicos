@@ -62,7 +62,9 @@ Este es el backend del proyecto **Sistema de Votos Electrónicos** desarrollado 
 en application.properties, configurar puerto, user, password)
    (en src/main/resources/application.properties se configura el nombre de la base de datos)
 4. Ejecutar el proyecto, posicionarse en "VotosElectronicosApplication" y presionar run en la derecha.
-5. Consumir los endpoints para autenticación, votación y gestión desde Postman.
+5. Cargar los datos del archivo "data.sql" a la Base de datos en portgresql (llenamos la base de datos).
+6. Cargar el trigger y las funciones que estan en "fpt.sql" en la Base de datos en postgresql.
+7. Consumir los endpoints para autenticación, votación y gestión desde Postman.
 
 ---
 ## Diagrama de la Base de Datos
